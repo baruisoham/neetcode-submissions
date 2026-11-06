@@ -1,0 +1,41 @@
+class Solution {
+
+    HashMap<Integer, List<Integer>> adjMat;
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+
+        adjMat = new HashMap<Integer, List<Integer>>();
+
+        int[] inDegree = new int[numCourses];
+
+        for(int i=0; i<prerequisites.length; i++){
+            adjMat.computeIfAbsent(prerequisites[i][1], k-> new ArrayList<Integer>()).add(prerequisites[i][0]);
+            inDegree[prerequisites[i][0]]++;
+        }
+
+        Queue<Integer> queue = new ArrayDeque<>();
+
+        for(int i=0; i<numCourses; i++){
+            if(inDegree[i]==0) queue.offer(i);
+        }
+
+        List<Integer> result = new ArrayList<>();
+
+        while(!queue.isEmpty()){
+
+            int node = queue.poll();
+
+            result.add(node);
+            for(int nextNode : adjMat.computeIfAbsent(node, k -> new ArrayList<>())){
+                inDegree[nextNode]--;
+                if(inDegree[nextNode]==0) queue.offer(nextNode);
+            }
+        }
+        if(result.size()<numCourses) return new int[0];
+        int[] lol = new int[result.size()];
+        for(int i=0; i<result.size(); i++){
+            lol[i] = result.get(i);
+        }
+        return lol;
+    }
+}
